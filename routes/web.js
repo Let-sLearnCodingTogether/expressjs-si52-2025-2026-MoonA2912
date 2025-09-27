@@ -1,4 +1,6 @@
 import express from "express"
+import* as profileController from "../controller/profileController.js"
+import* as namaController from "../controller/namaController.js"
 
 const web = express.Router()
 
@@ -6,15 +8,9 @@ web.get('/', (req,res)=>{
     res.render('index')
 })
 
-web.get('/:username', (req,res)=> {
-    const username = req.params.username;
-    res.render('public-profile',{
-        title : username,
-        username:username,
-        bio:"Terus Berenang"
-    })
+web.get('/:username', profileController.publicProfile)
 
-})
+web.get('/profile/:username', (namaController.nama))
 
 export default web
 
