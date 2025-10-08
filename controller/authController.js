@@ -7,10 +7,12 @@ export const register = async (req, res) => {
 
         console.log(registerData);
 
+        const hashPassword = hash(registerData.password)
+
         await UserModel.create({
             username:registerData.username,
             email: registerData.email,
-            password : registerData.password
+            password: hashPassword
         })
         
         res.status(201).json({
@@ -23,4 +25,44 @@ export const register = async (req, res) => {
             data: null
         })
     }
+}
+
+export const login = async (req,res) => {
+    try {
+//untuk mengambil body atau data dari request
+        const loginData = req.body
+//mencari user bedasarkan email didatabase
+        const user = await UserModel.findOne({
+        email : loginData.email
+})
+
+//jika user tidak ditemukan
+    if(!user){
+        return res.status(404).json({
+        message:"User tidak ditemukan",
+        data:null
+    })
+}
+//membandingkan password yang ada didalam db dengan request
+    if(user.password==loginData.password){
+        res.status(200).json({
+        message : "Login Berhasil",
+        data : {
+        username : user.username,
+        email : user.email,
+        token : "TOKEN" 
+        }
+    })
+    
+}
+return res.status(401).json({
+        message : 'Login Gagal',
+        data : null
+    })
+}catch(error){
+        res.status(500).json({
+        message : error,
+        data : null
+    })
+}
 }
